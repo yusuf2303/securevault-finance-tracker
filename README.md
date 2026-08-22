@@ -1,16 +1,49 @@
-# React + Vite
+# SecureVault
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive personal finance tracker built with React. It allows users to record income and expenses, view their balance, and manage recent transactions.
 
-Currently, two official plugins are available:
+> Educational prototype: data is stored locally in the browser. Authentication, encryption, and a secure backend have not been added yet.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- Add income and expense transactions
+- Automatically calculate income, expenses, and balance
+- Delete transactions
+- Save transactions in the browser using localStorage
+- Change input labels based on transaction type
+- Responsive design for desktop and smaller screens
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Technologies Used
 
-## Expanding the ESLint configuration
+- React
+- JavaScript
+- CSS
+- Vite
+- Browser localStorage
+- Git and GitHub
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Run Locally
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/yusuf2303/securevault-finance-tracker.git
+```
+
+2. Enter the project folder:
+
+```bash
+cd securevault-finance-tracker
+```
+
+3. Install the required packages:
+
+```bash
+npm install
+```
+
+4. Start the application:
+
+```bash
+npm run dev
+```
