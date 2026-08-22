@@ -60,3 +60,7 @@ npm run dev
 ## Live Demo
 
 [Open SecureVault](https://securevault-finance-tracker.vercel.app/)
+
+## Preview
+
+![SecureVault finance tracker dashboard](./public/securevault-preview.png)
