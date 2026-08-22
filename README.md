@@ -47,3 +47,16 @@ npm install
 ```bash
 npm run dev
 ```
+
+## Future Improvements
+
+- User accounts and authentication
+- Secure backend and database
+- Encryption for sensitive financial data
+- Transaction categories
+- Monthly budgets
+- Charts and financial reports
+
+## Live Demo
+
+[Open SecureVault](https://securevault-finance-tracker.vercel.app/)
