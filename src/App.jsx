@@ -1,0 +1,149 @@
+import { useEffect, useState } from "react"
+function App() {
+
+const [transactions, setTransactions] = useState(() => {
+  const savedTransactions = localStorage.getItem("securevault-transactions")
+
+  if (savedTransactions) {
+    return JSON.parse(savedTransactions)
+  }
+
+  return [
+    { id: 1, name: "Salary", amount: 5000 },
+    { id: 2, name: "Rent", amount: -1500 },
+    { id: 3, name: "Food", amount: -1000 }
+  ]
+})
+useEffect(() => {
+  localStorage.setItem(
+    "securevault-transactions",
+    JSON.stringify(transactions)
+  )
+}, [transactions])
+const income = transactions
+  .filter((transaction) => transaction.amount > 0)
+  .reduce((total, transaction) => total + transaction.amount, 0)
+
+const expenses = transactions
+  .filter((transaction) => transaction.amount < 0)
+  .reduce((total, transaction) => total + Math.abs(transaction.amount), 0)
+
+const balance = income - expenses
+
+const [newExpense, setNewExpense] = useState("")
+const [newExpenseName, setNewExpenseName] = useState("")
+const [transactionType, setTransactionType] = useState("expense")
+
+
+
+ function addTransaction(event) {
+  event.preventDefault()
+
+  const amount = Number(newExpense)
+ 
+
+ if (newExpenseName.trim() === "" || amount <= 0) {
+  return
+
+ }
+
+ 
+  setTransactions([
+  ...transactions,
+  {
+    id: Date.now(),
+   name: newExpenseName,
+   amount: transactionType === "expense" ? -amount : amount
+  }
+])
+  setNewExpense("")
+  setNewExpenseName("")
+}
+function deleteTransaction(id) {
+  const updatedTransactions = transactions.filter(
+    (transaction) => transaction.id !== id
+  )
+
+  setTransactions(updatedTransactions)
+}
+
+  return (
+    <main className="dashboard">
+      <h1>SecureVault</h1>
+      <p>Your personal finance dashboard</p>
+
+   <div className="summary-grid">
+  <section className="summary-card">
+    <h2>Total Balance</h2>
+    <p>RM {balance}</p>
+  </section>
+
+  <section className="summary-card">
+    <h2>Income</h2>
+    <p>RM {income}</p>
+  </section>
+
+  <section className="summary-card">
+    <h2>Expenses</h2>
+    <p>RM {expenses}</p>
+  </section>
+</div>
+
+<section className="form-card">
+  <h2>Add Transaction</h2>
+
+  <form className="transaction-form" onSubmit={addTransaction}>
+    <select
+      value={transactionType}
+      onChange={(event) => setTransactionType(event.target.value)}
+    >
+      <option value="expense">Expense</option>
+      <option value="income">Income</option>
+    </select>
+
+    <input
+      type="text"
+      placeholder={
+        transactionType === "income" ? "Income name" : "Expense name"
+      }
+      value={newExpenseName}
+      onChange={(event) => setNewExpenseName(event.target.value)}
+    />
+
+    <input
+      type="number"
+      placeholder={
+        transactionType === "income"
+          ? "Enter income amount"
+          : "Enter expense amount"
+      }
+      value={newExpense}
+      onChange={(event) => setNewExpense(event.target.value)}
+    />
+
+    <button type="submit">Add Transaction</button>
+  </form>
+</section>
+
+
+        <section className="transactions-card">
+        <h2>Recent Transactions</h2>
+ <ul>
+          {transactions.map((transaction) => (
+          <li key={transaction.id}>
+  {transaction.name}: RM {transaction.amount}
+
+  <button onClick={() => deleteTransaction(transaction.id)}>
+    Delete
+  </button>
+</li>
+            
+          ))}
+        </ul>
+      </section>
+  
+    </main>
+  )
+}
+
+export default App
