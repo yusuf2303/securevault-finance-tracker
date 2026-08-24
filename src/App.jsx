@@ -1,5 +1,27 @@
+import Auth from "./Auth"
+import { supabase } from "./supabaseClient"
+
 import { useEffect, useState } from "react"
 function App() {
+
+  const [session, setSession] = useState(null)
+const [authLoading, setAuthLoading] = useState(true)
+
+useEffect(() => {
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    setSession(session)
+    setAuthLoading(false)
+  })
+
+  const {
+    data: { subscription }
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    setSession(session)
+    setAuthLoading(false)
+  })
+
+  return () => subscription.unsubscribe()
+}, [])
 
 const [transactions, setTransactions] = useState(() => {
   const savedTransactions = localStorage.getItem("securevault-transactions")
@@ -67,8 +89,16 @@ function deleteTransaction(id) {
   setTransactions(updatedTransactions)
 }
 
-  return (
-    <main className="dashboard">
+if (authLoading) {
+  return <p>Loading SecureVault...</p>
+}
+
+if (!session) {
+  return <Auth />
+}
+
+return (
+  <main className="dashboard">
       <h1>SecureVault</h1>
       <p>Your personal finance dashboard</p>
 
@@ -131,7 +161,15 @@ function deleteTransaction(id) {
  <ul>
           {transactions.map((transaction) => (
           <li key={transaction.id}>
-  {transaction.name}: RM {transaction.amount}
+ <span>{transaction.name}</span>
+
+<span
+  className={
+    transaction.amount < 0 ? "amount-negative" : "amount-positive"
+  }
+>
+  RM {transaction.amount}
+</span>
 
   <button onClick={() => deleteTransaction(transaction.id)}>
     Delete
