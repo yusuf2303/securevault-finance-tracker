@@ -23,25 +23,43 @@ useEffect(() => {
   return () => subscription.unsubscribe()
 }, [])
 
-const [transactions, setTransactions] = useState(() => {
-  const savedTransactions = localStorage.getItem("securevault-transactions")
+const [transactions, setTransactions] = useState([])
+const [transactionsLoading, setTransactionsLoading] = useState(true)
+const [transactionError, setTransactionError] = useState("")
 
-  if (savedTransactions) {
-    return JSON.parse(savedTransactions)
+useEffect(() => {
+  if (!session) {
+    return
   }
 
-  return [
-    { id: 1, name: "Salary", amount: 5000 },
-    { id: 2, name: "Rent", amount: -1500 },
-    { id: 3, name: "Food", amount: -1000 }
-  ]
-})
-useEffect(() => {
-  localStorage.setItem(
-    "securevault-transactions",
-    JSON.stringify(transactions)
-  )
-}, [transactions])
+  async function loadTransactions() {
+    setTransactionsLoading(true)
+    setTransactionError("")
+
+    const { data, error } = await supabase
+      .from("transactions")
+      .select("id, name, amount, type, created_at")
+      .order("created_at", { ascending: false })
+
+    if (error) {
+      setTransactionError(error.message)
+    } else {
+      const formattedTransactions = data.map((transaction) => ({
+        ...transaction,
+        amount:
+          transaction.type === "expense"
+            ? -Number(transaction.amount)
+            : Number(transaction.amount)
+      }))
+
+      setTransactions(formattedTransactions)
+    }
+
+    setTransactionsLoading(false)
+  }
+
+  loadTransactions()
+}, [session])
 const income = transactions
   .filter((transaction) => transaction.amount > 0)
   .reduce((total, transaction) => total + transaction.amount, 0)
@@ -58,29 +76,50 @@ const [transactionType, setTransactionType] = useState("expense")
 
 
 
- function addTransaction(event) {
+async function addTransaction(event) {
   event.preventDefault()
 
   const amount = Number(newExpense)
- 
+  const name = newExpenseName.trim()
 
- if (newExpenseName.trim() === "" || amount <= 0) {
-  return
-
- }
-
- 
-  setTransactions([
-  ...transactions,
-  {
-    id: Date.now(),
-   name: newExpenseName,
-   amount: transactionType === "expense" ? -amount : amount
+  if (name === "" || amount <= 0) {
+    return
   }
-])
+
+  setTransactionError("")
+
+  const { data, error } = await supabase
+    .from("transactions")
+    .insert({
+      name: name,
+      amount: amount,
+      type: transactionType
+    })
+    .select("id, name, amount, type, created_at")
+    .single()
+
+  if (error) {
+    setTransactionError(error.message)
+    return
+  }
+
+  const formattedTransaction = {
+    ...data,
+    amount:
+      data.type === "expense"
+        ? -Number(data.amount)
+        : Number(data.amount)
+  }
+
+  setTransactions((currentTransactions) => [
+    formattedTransaction,
+    ...currentTransactions
+  ])
+
   setNewExpense("")
   setNewExpenseName("")
 }
+
 function deleteTransaction(id) {
   const updatedTransactions = transactions.filter(
     (transaction) => transaction.id !== id
@@ -158,6 +197,13 @@ return (
 
         <section className="transactions-card">
         <h2>Recent Transactions</h2>
+        {transactionError && (
+  <p role="alert">{transactionError}</p>
+)}
+
+{transactionsLoading && (
+  <p>Loading transactions...</p>
+)}
  <ul>
           {transactions.map((transaction) => (
           <li key={transaction.id}>
