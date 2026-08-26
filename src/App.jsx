@@ -138,9 +138,20 @@ if (!session) {
 
 return (
   <main className="dashboard">
-      <h1>SecureVault</h1>
-      <p>Your personal finance dashboard</p>
+   <div className="dashboard-header">
+  <div>
+    <h1>SecureVault</h1>
+    <p>Your personal finance dashboard</p>
+  </div>
 
+  <button
+    onClick={async () => {
+      await supabase.auth.signOut()
+    }}
+  >
+    Logout
+  </button>
+</div>
    <div className="summary-grid">
   <section className="summary-card">
     <h2>Total Balance</h2>
