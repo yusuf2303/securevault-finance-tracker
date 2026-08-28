@@ -120,12 +120,22 @@ async function addTransaction(event) {
   setNewExpenseName("")
 }
 
-function deleteTransaction(id) {
-  const updatedTransactions = transactions.filter(
-    (transaction) => transaction.id !== id
-  )
+async function deleteTransaction(id) {
+  setTransactionError("")
 
-  setTransactions(updatedTransactions)
+  const { error } = await supabase
+    .from("transactions")
+    .delete()
+    .eq("id", id)
+
+  if (error) {
+    setTransactionError(error.message)
+    return
+  }
+
+  setTransactions((currentTransactions) =>
+    currentTransactions.filter((transaction) => transaction.id !== id)
+  )
 }
 
 if (authLoading) {
