@@ -6,6 +6,9 @@ function App() {
 
   const [session, setSession] = useState(null)
 const [authLoading, setAuthLoading] = useState(true)
+const [category, setCategory] = useState("Other")
+
+const categories = ["Food", "Transport", "Bills", "Entertainment", "Salary", "Other"]
 
 useEffect(() => {
   supabase.auth.getSession().then(({ data: { session } }) => {
@@ -88,15 +91,16 @@ async function addTransaction(event) {
 
   setTransactionError("")
 
-  const { data, error } = await supabase
-    .from("transactions")
-    .insert({
-      name: name,
-      amount: amount,
-      type: transactionType
-    })
-    .select("id, name, amount, type, created_at")
-    .single()
+ const { data, error } = await supabase
+  .from("transactions")
+  .insert({
+    name: name,
+    amount: amount,
+    type: transactionType,
+    category: category
+  })
+  .select("id, name, amount, type, category, created_at")
+  .single()
 
   if (error) {
     setTransactionError(error.message)
@@ -118,9 +122,15 @@ async function addTransaction(event) {
 
   setNewExpense("")
   setNewExpenseName("")
+  setCategory("Other")
 }
 
-async function deleteTransaction(id) {
+async function deleteTransaction(id, name) {
+  const confirmed = window.confirm(`Delete "${name}"? This can't be undone.`)
+  if (!confirmed) {
+    return
+  }
+
   setTransactionError("")
 
   const { error } = await supabase
@@ -190,6 +200,11 @@ return (
       <option value="expense">Expense</option>
       <option value="income">Income</option>
     </select>
+    <select value={category} onChange={(event) => setCategory(event.target.value)}>
+  {categories.map((cat) => (
+    <option key={cat} value={cat}>{cat}</option>
+  ))}
+</select>
 
     <input
       type="text"
@@ -229,6 +244,7 @@ return (
           {transactions.map((transaction) => (
           <li key={transaction.id}>
  <span>{transaction.name}</span>
+ <span className="transaction-category">{transaction.category}</span>
 
 <span
   className={
