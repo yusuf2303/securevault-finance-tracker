@@ -21,12 +21,12 @@ Responsive design for desktop and smaller screens
 
 
 # Technologies Used
-React
-JavaScript
-CSS
-Vite
-Supabase (Auth + Postgres database)
-Git and GitHub
+- React
+- JavaScript
+- CSS
+- Vite
+- Supabase (Auth + Postgres database)
+- Git and GitHub
 
 ## Run Locally
 
