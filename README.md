@@ -3,15 +3,22 @@
 A responsive personal finance tracker built with React and Supabase. It allows users to sign up, record income and expenses, view their balance, and manage recent transactions securely.
 
 #Features
-
 User accounts with email authentication (Supabase Auth)
+
 Add income and expense transactions
+
 Automatically calculate income, expenses, and balance
+
 Delete transactions
+
 Transactions stored securely in a Supabase (Postgres) database, scoped per user
+
 Row Level Security (RLS) policies ensure users can only access their own data
+
 Change input labels based on transaction type
+
 Responsive design for desktop and smaller screens
+
 
 #Technologies Used
 React
