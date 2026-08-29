@@ -20,7 +20,7 @@ Change input labels based on transaction type
 Responsive design for desktop and smaller screens
 
 
-#Technologies Used
+# Technologies Used
 React
 JavaScript
 CSS
